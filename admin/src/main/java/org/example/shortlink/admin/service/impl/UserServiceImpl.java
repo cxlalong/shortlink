@@ -51,15 +51,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     /**
      * 查询用户名是否存在
      * @param username 用户名
-     * @return 用户名存在返回True， 用户名不存在返回false
+     * @return 用户名存在返回False， 用户名不存在返回True
      */
     public Boolean hasUserName(String username) {
-        return userRegisterCachePenetrationBloomFilter.contains(username);
+        return !userRegisterCachePenetrationBloomFilter.contains(username);
     }
 
     @Override
     public void register(UserRegisterReqDTO requestParam) {
-        if(hasUserName(requestParam.getUsername())) {
+        if(!hasUserName(requestParam.getUsername())) {
             throw new ClientException(USER_NAME_EXIST);
         }
         RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + requestParam.getUsername());
