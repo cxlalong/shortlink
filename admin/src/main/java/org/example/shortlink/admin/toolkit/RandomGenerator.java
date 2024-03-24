@@ -10,7 +10,7 @@ public class RandomGenerator {
 
     /**
      * 随机字符串生成
-     * @return
+     * @return gid
      */
     public static String generateRandomCode() {
         SecureRandom random = new SecureRandom();
