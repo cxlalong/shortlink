@@ -67,5 +67,4 @@ public class UserDO {
     @TableField(fill = FieldFill.INSERT)
     private Integer delFlag;
 
-    public UserDO() {}
 }
