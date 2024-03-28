@@ -2,7 +2,7 @@ package org.example.shortlink.admin.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.example.shortlink.admin.common.convention.result.Result;
-import org.example.shortlink.admin.remote.dto.ShortLinkRemoteService;
+import org.example.shortlink.admin.remote.ShortLinkRemoteService;
 import org.example.shortlink.admin.remote.dto.req.ShortLinkCreateReqDTO;
 import org.example.shortlink.admin.remote.dto.req.ShortLinkPageReqDTO;
 import org.example.shortlink.admin.remote.dto.resp.ShortLinkCreateRespDTO;

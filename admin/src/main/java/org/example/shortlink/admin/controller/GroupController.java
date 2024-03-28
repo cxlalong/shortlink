@@ -6,7 +6,7 @@ import org.example.shortlink.admin.common.convention.result.Results;
 import org.example.shortlink.admin.dto.req.ShortLinkGroupSaveReqDTO;
 import org.example.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import org.example.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
-import org.example.shortlink.admin.dto.resp.ShrotLinkGroupResqDTO;
+import org.example.shortlink.admin.dto.resp.ShortLinkGroupResqDTO;
 import org.example.shortlink.admin.service.GroupService;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +34,7 @@ public class GroupController {
      * 查询短链接分组集合
      */
     @GetMapping("/api/short-link/admin/v1/group")
-    public Result<List<ShrotLinkGroupResqDTO>> listGroup() {
+    public Result<List<ShortLinkGroupResqDTO>> listGroup() {
         return Results.success(groupService.listGroup());
     }
 
