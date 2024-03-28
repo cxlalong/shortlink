@@ -46,6 +46,4 @@ public class UserDO extends BaseDO {
     */
     private Long deletionTime;
 
-
-
 }

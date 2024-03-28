@@ -47,7 +47,7 @@ public class ShortLinkDO extends BaseDO {
     /**
      * 点击量
      */
-    private Integer chickNum;
+    private Integer clickNum;
 
     /**
      * 分组标识
