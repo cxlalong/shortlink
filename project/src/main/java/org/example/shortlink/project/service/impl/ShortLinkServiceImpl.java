@@ -96,7 +96,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             }
         }
         stringRedisTemplate.opsForValue().set(
-                fullShortUrl,
+                String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
                 requestParam.getOriginUrl(),
                 LinkUtil.getLinkCacheValidDate(requestParam.getValidDate()),
                 TimeUnit.MILLISECONDS);
