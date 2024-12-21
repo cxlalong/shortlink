@@ -31,6 +31,9 @@ import org.example.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import org.example.shortlink.project.service.ShortLinkService;
 import org.example.shortlink.project.util.HashUtil;
 import org.example.shortlink.project.util.LinkUtil;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -39,6 +42,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +85,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 .describe(requestParam.getDescribe())
                 .shortUri(shortLinkSuffix)
                 .fullShortUrl(fullShortUrl)
+                .favicon(fetchFaviconUrl(requestParam.getOriginUrl()))
                 .build();
         ShortLinkGotoDO shortLinkGotoDO = ShortLinkGotoDO.builder()
                 .fullShortUrl(fullShortUrl)
@@ -287,5 +293,32 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             customGenerateCount++;
         }
         return shortUri;
+    }
+
+    private String fetchFaviconUrl(String siteUrl) {
+        try {
+            // 确保URL以斜杠结尾
+            if (!siteUrl.endsWith("/")) {
+                siteUrl += "/";
+            }
+
+            // 尝试从HTML文档中获取favicon链接
+            Document document = Jsoup.connect(siteUrl).get();
+            Element link = document.select("link[rel~=(?i)^(shortcut|icon)$]").first();
+
+            if (link != null) {
+                // 使用 abs:href 来获取绝对路径
+                return link.attr("abs:href");
+            } else {
+                // 如果没有找到favicon链接，则尝试获取根目录下的favicon.ico
+                URL url = new URL(siteUrl);
+                return new URL(url.getProtocol(), url.getHost(), "/favicon.ico").toString();
+            }
+        } catch (IOException e) {
+            // 处理异常情况，例如日志记录，并返回一个友好的错误消息或者默认图标URL
+            // 这里只是简单地打印堆栈跟踪，实际应用中应根据需求做适当处理
+            e.printStackTrace();
+            return "Error fetching favicon: " + e.getMessage();
+        }
     }
 }
