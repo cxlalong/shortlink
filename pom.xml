@@ -28,6 +28,9 @@
         <hutool-all.version>5.8.20</hutool-all.version>
         <redisson.version>3.21.3</redisson.version>
         <guava.version>30.0-jre</guava.version>
+        <aop.version>3.0.7</aop.version>
+        <Jsoup.version>1.15.4</Jsoup.version>
+        <rocketmq-spring-boot-starter>2.3.1</rocketmq-spring-boot-starter>
     </properties>
 
     <dependencies>
@@ -46,6 +49,8 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+
 
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -70,6 +75,18 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${aop.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq-spring-boot-starter}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-jdbc-core</artifactId>
                 <version>${shardingsphere.version}</version>
@@ -88,9 +105,22 @@
             </dependency>
 
             <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjtools</artifactId>
+                <version>${aspect.version}</version>
+            </dependency>
+
+
+            <dependency>
                 <groupId>com.github.dozermapper</groupId>
                 <artifactId>dozer-core</artifactId>
                 <version>${dozer-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${Jsoup.version}</version>
             </dependency>
 
             <dependency>

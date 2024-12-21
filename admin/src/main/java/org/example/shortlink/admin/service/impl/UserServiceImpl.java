@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.example.shortlink.admin.common.biz.user.UserContext;
 import org.example.shortlink.admin.common.convention.exception.ClientException;
 import org.example.shortlink.admin.common.enums.UserErrorCode;
 import org.example.shortlink.admin.dao.entity.UserDO;
@@ -72,9 +73,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public void register(UserRegisterReqDTO requestParam) {
+        //判断用户是否已存在
         if(!hasUserName(requestParam.getUsername())) {
+
             throw new ClientException(USER_NAME_EXIST);
         }
+        //分布式锁确保只有一个线程能够更新数据库，避免缓存穿透
         RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + requestParam.getUsername());
         try {
             if (lock.tryLock()) {
@@ -88,6 +92,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                 }
                 userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
                 groupService.saveGroup(requestParam.getUsername(), "默认分组");
+                stringRedisTemplate.delete(LOCK_USER_REGISTER_KEY + requestParam.getUsername());
                 return;
             }
             throw new ClientException(USER_NAME_EXIST);
@@ -99,6 +104,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void update(UserUpdateReqDTO requestParam) {
         // TODO 验证当前用户名是否为登录用户
+        if (!requestParam.getUsername().equals(UserContext.getUsername())) {
+            throw new ClientException("非登录用户");
+        }
         LambdaUpdateWrapper<UserDO> updateWrapper = Wrappers.lambdaUpdate(UserDO.class)
                 .eq(UserDO::getUsername, requestParam.getUsername());
         baseMapper.update(BeanUtil.toBean(requestParam, UserDO.class), updateWrapper);
@@ -120,7 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         }
         String uuid = UUID.randomUUID().toString();
         stringRedisTemplate.opsForHash().put("login_" + requestParam.getUsername(), uuid, JSON.toJSONString(userDO));
-        stringRedisTemplate.expire("login_" + requestParam.getUsername(), 30L, TimeUnit.DAYS);
+        stringRedisTemplate.expire("login_" + requestParam.getUsername(), 7L, TimeUnit.DAYS);
         return new UserLoginRespDTO(uuid);
     }
 
@@ -128,10 +136,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     public Boolean checkLogin(String username, String token) {
         return stringRedisTemplate.opsForHash().get("login_" + username, token) != null;
     }
-
     @Override
     public void logout(String username, String token) {
         if (checkLogin(username, token)) {
+            UserContext.removeUser();
             stringRedisTemplate.delete("login_" + username);
             return;
         }

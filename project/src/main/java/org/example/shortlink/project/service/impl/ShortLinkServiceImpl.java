@@ -96,6 +96,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 throw new ServiceException("短链接生成重复");
             }
         }
+        //缓存预热
         stringRedisTemplate.opsForValue().set(
                 String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
                 requestParam.getOriginUrl(),
@@ -179,34 +180,60 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
 
     }
 
+    /**
+     * 根据短链接还原原始URL。
+     * 该方法首先尝试从Redis中获取短链接对应的原始URL。如果存在，则重定向到原始URL。
+     * 如果短链接在Bloom Filter中不存在，表示该短链接可能不存在，直接重定向到未找到页面。
+     * 如果短链接在Bloom Filter中存在，但Redis中不存在对应的原始URL，则尝试从数据库中查询。
+     * 如果数据库中也不存在，则在Redis中设置标记，并重定向到未找到页面。
+     * 如果数据库中存在对应的短链接信息，但该短链接已过期，则在Redis中设置标记，并重定向到未找到页面。
+     * 如果数据库中的短链接信息有效，则将原始URL存储到Redis中，并重定向到原始URL。
+     * 使用Redisson的分布式锁来确保并发访问时的线程安全。
+     *
+     * @param shortUri 短链接URI。
+     * @param request  Servlet请求对象。
+     * @param response Servlet响应对象。
+     */
     @SneakyThrows
     @Override
     public void restoreUrl(String shortUri, ServletRequest request, ServletResponse response) {
+        // 构建完整的短链接URL
         String serverName = request.getServerName();
         String fullShortUrl = serverName + "/" + shortUri;
+
+        // 尝试从Redis中直接获取原始URL
         String originLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));
         if (StrUtil.isNotBlank(originLink)) {
             ((HttpServletResponse) response).sendRedirect(originLink);
             return;
         }
+
+        // 检查短链接是否可能不存在
         boolean contains = shortUriCreateCachePenetrationBloomFilter.contains(fullShortUrl);
         if (!contains) {
             ((HttpServletResponse) response).sendRedirect("/page/notfound");
             return;
         }
+
+        // 检查Redis中是否存在标记，表示该短链接确实不存在
         String gotoIsNullShortLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl));
         if (StrUtil.isNotBlank(gotoIsNullShortLink)) {
             ((HttpServletResponse) response).sendRedirect("/page/notfound");
             return;
         }
+
+        // 使用分布式锁防止并发问题
         RLock lock = redissonClient.getLock(String.format(LOCK_GOTO_SHORT_LINK_KEY, fullShortUrl));
         lock.lock();
         try {
+            // 再次尝试从Redis中获取原始URL，可能有其他线程已经处理并存储了
             originLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));
             if (StrUtil.isNotBlank(originLink)) {
                 ((HttpServletResponse) response).sendRedirect(originLink);
                 return;
             }
+
+            // 从数据库中查询短链接信息
             LambdaQueryWrapper<ShortLinkGotoDO> linkGotoqueryWrapper = Wrappers.lambdaQuery(ShortLinkGotoDO.class)
                     .eq(ShortLinkGotoDO::getFullShortUrl, fullShortUrl);
             ShortLinkGotoDO shortLinkGotoDO = shortLinkGotoMapper.selectOne(linkGotoqueryWrapper);
@@ -215,6 +242,8 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 stringRedisTemplate.opsForValue().set(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl), "-", 30, TimeUnit.MINUTES);
                 return;
             }
+
+            // 根据短链接信息查询具体的短链接数据
             LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
                     .eq(ShortLinkDO::getGid, shortLinkGotoDO.getGid())
                     .eq(ShortLinkDO::getFullShortUrl, fullShortUrl)
@@ -222,11 +251,13 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                     .eq(ShortLinkDO::getEnableStatus, 0);
             ShortLinkDO shortLinkDO = baseMapper.selectOne(queryWrapper);
             if (shortLinkDO != null) {
+                // 检查短链接是否过期
                 if (shortLinkDO.getValidDate() != null && shortLinkDO.getValidDate().before(new Date())) {
                     stringRedisTemplate.opsForValue().set(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl), "-", 30, TimeUnit.MINUTES);
                     ((HttpServletResponse) response).sendRedirect("/page/notfound");
                     return;
                 }
+                // 将原始URL存储到Redis中，并设置过期时间
                 stringRedisTemplate.opsForValue().set(
                         String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
                         shortLinkDO.getOriginUrl(),
@@ -238,6 +269,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             lock.unlock();
         }
     }
+
 
     private String generateSuffix(ShortLinkCreateReqDTO requestParam) {
         String shortUri;

@@ -2,6 +2,7 @@ package org.example.shortlink.admin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
+import org.example.shortlink.admin.annotation.RateLimit;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.common.convention.result.Results;
 import org.example.shortlink.admin.dto.req.UserLoginReqDTO;
@@ -46,6 +47,7 @@ public class UserController {
      * 查询用户名是否存在
      */
     @GetMapping("/api/short-link/admin/v1/user/has-username")
+    @RateLimit(value = 100L, time = 1L)
     public Result<Boolean> hasUsername(@RequestParam("username") String username) {
         return Results.success(userService.hasUserName(username));
     }
