@@ -294,7 +294,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 cookie.setPath(StrUtil.sub(fullShortUrl, fullShortUrl.indexOf("/"), fullShortUrl.length()));
                 ((HttpServletResponse) response).addCookie(cookie);
                 uvFirstFlag.set(true);
-                stringRedisTemplate.opsForSet().add("short-link:statas:uv" + fullShortUrl, uv);
+                stringRedisTemplate.opsForSet().add("short-link:stats:uv" + fullShortUrl, uv);
             };
             if(ArrayUtil.isNotEmpty(cookies)) {
                 Arrays.stream(cookies)
@@ -302,7 +302,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .findFirst()
                         .map(Cookie::getValue)
                         .ifPresentOrElse(item -> {
-                            Long added = stringRedisTemplate.opsForSet().add("short-link:statas:uv" + fullShortUrl, item);
+                            Long added = stringRedisTemplate.opsForSet().add("short-link:stats:uv" + fullShortUrl, item);
                             uvFirstFlag.set(added != null && added > 0L);
                         }, addResponseCookieTask);
             } else {
