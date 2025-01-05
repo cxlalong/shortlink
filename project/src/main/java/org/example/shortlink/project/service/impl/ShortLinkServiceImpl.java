@@ -37,6 +37,7 @@ import org.example.shortlink.project.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import org.example.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import org.example.shortlink.project.service.ShortLinkService;
 import org.example.shortlink.project.util.HashUtil;
+import org.example.shortlink.project.util.IpAddressUtil;
 import org.example.shortlink.project.util.LinkUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -302,12 +303,15 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .findFirst()
                         .map(Cookie::getValue)
                         .ifPresentOrElse(item -> {
-                            Long added = stringRedisTemplate.opsForSet().add("short-link:stats:uv" + fullShortUrl, item);
-                            uvFirstFlag.set(added != null && added > 0L);
+                            Long uvAdded = stringRedisTemplate.opsForSet().add("short-link:stats:uv" + fullShortUrl, item);
+                            uvFirstFlag.set(uvAdded != null && uvAdded > 0L);
                         }, addResponseCookieTask);
             } else {
                 addResponseCookieTask.run();
             }
+            String remoteAddr = IpAddressUtil.getUserIp((HttpServletRequest) request);
+            Long uipAdded = stringRedisTemplate.opsForSet().add("short-link:stats:uip" + fullShortUrl, remoteAddr);
+            boolean uipFirstFlag = uipAdded != null && uipAdded > 0L;
             if(StrUtil.isBlank(gid)) {
                 LambdaQueryWrapper<ShortLinkGotoDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkGotoDO.class)
                         .eq(ShortLinkGotoDO::getFullShortUrl, fullShortUrl);
@@ -320,7 +324,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             LinkAccessStatsDO linkAccessStatsDO = LinkAccessStatsDO.builder()
                     .pv(1)
                     .uv(uvFirstFlag.get() ? 1 : 0)
-                    .uip(1)
+                    .uip(uipFirstFlag ? 1 : 0)
                     .weekday(weekday)
                     .fullShortUrl(fullShortUrl)
                     .date(date)
