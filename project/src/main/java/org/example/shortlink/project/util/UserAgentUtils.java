@@ -5,6 +5,53 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UserAgentUtils {
 
     /**
+     * 获取请求的浏览器名称。
+     *
+     * @param request HttpServletRequest 对象
+     * @return 浏览器名称字符串
+     */
+    public static String getBrowser(HttpServletRequest request) {
+        if (request == null) {
+            return "Unknown";
+        }
+
+        String userAgent = request.getHeader("User-Agent");
+        if (userAgent == null || userAgent.isEmpty()) {
+            return "Unknown";
+        }
+
+        return parseBrowser(userAgent);
+    }
+
+    /**
+     * 解析 User-Agent 字符串以获取浏览器名称。
+     *
+     * @param userAgent User-Agent 字符串
+     * @return 浏览器名称字符串
+     */
+    private static String parseBrowser(String userAgent) {
+        userAgent = userAgent.toLowerCase();
+
+        if (userAgent.contains("edge")) {
+            return "Edge";
+        } else if (userAgent.contains("chrome") && !userAgent.contains("chromium")) {
+            return "Chrome";
+        } else if (userAgent.contains("safari") && !userAgent.contains("chrome") && !userAgent.contains("chromium")) {
+            return "Safari";
+        } else if (userAgent.contains("firefox")) {
+            return "Firefox";
+        } else if (userAgent.contains("opera") || userAgent.contains("opr")) {
+            return "Opera";
+        } else if (userAgent.contains("trident") || userAgent.contains("msie")) {
+            return "Internet Explorer";
+        } else if (userAgent.contains("chromium")) {
+            return "Chromium";
+        } else {
+            return "Unknown";
+        }
+    }
+
+    /**
      * 获取请求的操作系统名称。
      *
      * @param request HttpServletRequest 对象

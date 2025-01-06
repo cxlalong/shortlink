@@ -15,7 +15,7 @@ public interface LinkOsStatsMapper extends BaseMapper<LinkOsStatsDO> {
             "  #{linkOsStats.date,jdbcType=DATE},",
             "  #{linkOsStats.cnt,jdbcType=INTEGER},",
             "  #{linkOsStats.os,jdbcType=VARCHAR},",
-            "  NOW(), NOW(), #{linkOsStats.delFlag,jdbcType=TINYINT}",
+            "  NOW(), NOW(), 0",
             ")",
             "ON DUPLICATE KEY UPDATE",
             "  cnt = cnt + #{linkOsStats.cnt},",
