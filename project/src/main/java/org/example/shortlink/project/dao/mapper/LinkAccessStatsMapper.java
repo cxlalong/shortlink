@@ -31,7 +31,8 @@ public interface LinkAccessStatsMapper extends BaseMapper<LinkAccessStatsDO> {
             "ON DUPLICATE KEY UPDATE",
             "  pv = pv + #{linkAccessStats.pv},",
             "  uv = uv + #{linkAccessStats.uv},",
-            "  uip = uip + #{linkAccessStats.uip}"
+            "  uip = uip + #{linkAccessStats.uip},",
+            "  update_time = NOW()"
     })
     void shortLinkStats(@Param("linkAccessStats") LinkAccessStatsDO linkAccessStats);
 }

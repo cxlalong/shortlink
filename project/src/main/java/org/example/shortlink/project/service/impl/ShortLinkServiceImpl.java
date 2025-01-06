@@ -26,14 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.shortlink.project.common.convention.exception.ClientException;
 import org.example.shortlink.project.common.convention.exception.ServiceException;
 import org.example.shortlink.project.common.enums.ValidDateTypeEnum;
-import org.example.shortlink.project.dao.entity.LinkAccessStatsDO;
-import org.example.shortlink.project.dao.entity.LinkLocaleStatsDO;
-import org.example.shortlink.project.dao.entity.ShortLinkDO;
-import org.example.shortlink.project.dao.entity.ShortLinkGotoDO;
-import org.example.shortlink.project.dao.mapper.LinkAccessStatsMapper;
-import org.example.shortlink.project.dao.mapper.LinkLocaleStatsMapper;
-import org.example.shortlink.project.dao.mapper.ShortLinkGotoMapper;
-import org.example.shortlink.project.dao.mapper.ShortLinkMapper;
+import org.example.shortlink.project.dao.entity.*;
+import org.example.shortlink.project.dao.mapper.*;
 import org.example.shortlink.project.dto.req.ShortLinkCreateReqDTO;
 import org.example.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import org.example.shortlink.project.dto.req.ShortLinkUpdateReqDTO;
@@ -44,6 +38,7 @@ import org.example.shortlink.project.service.ShortLinkService;
 import org.example.shortlink.project.util.HashUtil;
 import org.example.shortlink.project.util.IpAddressUtil;
 import org.example.shortlink.project.util.LinkUtil;
+import org.example.shortlink.project.util.UserAgentUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -84,6 +79,9 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private final LinkAccessStatsMapper linkAccessStatsMapper;
 
     private final LinkLocaleStatsMapper linkLocaleStatsMapper;
+
+    private final LinkOsStatsMapper linkOsStatsMapper;
+
     @Value("${short-link.stats.locale.amap-key}")
     private String key;
     @Override
@@ -365,6 +363,14 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 linkLocaleStatsMapper.shortLinkLocaleStats(linkLocaleStatsDO);
             }
             linkAccessStatsMapper.shortLinkStats(linkAccessStatsDO);
+            LinkOsStatsDO linkOsStatsDO = LinkOsStatsDO.builder()
+                    .fullShortUrl(fullShortUrl)
+                    .gid(gid)
+                    .date(date)
+                    .cnt(1)
+                    .os(UserAgentUtils.getOperatingSystem((HttpServletRequest) request))
+                    .build();
+            linkOsStatsMapper.shortLinkOsStats(linkOsStatsDO);
         } catch (Throwable ex) {
             log.error("统计短链接访问异常", ex);
         }

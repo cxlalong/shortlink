@@ -24,7 +24,8 @@ public interface LinkLocaleStatsMapper extends BaseMapper<LinkLocaleStatsDO> {
             "  NOW(), NOW(), 0",
             ")",
             "ON DUPLICATE KEY UPDATE",
-            "  cnt = cnt + #{linkLocaleStats.cnt}"
+            "  cnt = cnt + #{linkLocaleStats.cnt},",
+            "  update_time = NOW()"
     })
     void shortLinkLocaleStats(@Param("linkLocaleStats") LinkLocaleStatsDO linkLocaleStatsDO);
 }
