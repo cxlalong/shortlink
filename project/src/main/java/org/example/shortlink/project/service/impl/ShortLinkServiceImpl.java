@@ -302,7 +302,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             Runnable addResponseCookieTask = ()-> {
                 String uv = UUID.randomUUID().toString();
                 Cookie cookie = new Cookie("uv", uv);
-                cookie.setMaxAge(60 * 60 * 24 * 30);
+                cookie.setMaxAge(60 * 60 * 24);
                 cookie.setPath(StrUtil.sub(fullShortUrl, fullShortUrl.indexOf("/"), fullShortUrl.length()));
                 ((HttpServletResponse) response).addCookie(cookie);
                 uvFirstFlag.set(true);
@@ -320,9 +320,15 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             } else {
                 addResponseCookieTask.run();
             }
+            if(uvFirstFlag.get()) {
+                stringRedisTemplate.expire("short-link:stats:uv" + fullShortUrl, 24 * 60, TimeUnit.MINUTES);
+            }
             String remoteAddr = IpAddressUtil.getUserIp((HttpServletRequest) request);
             Long uipAdded = stringRedisTemplate.opsForSet().add("short-link:stats:uip" + fullShortUrl, remoteAddr);
             boolean uipFirstFlag = uipAdded != null && uipAdded > 0L;
+            if (uipFirstFlag) {
+                stringRedisTemplate.expire("short-link:stats:uip" + fullShortUrl, 24 * 60, TimeUnit.MINUTES);
+            }
             if(StrUtil.isBlank(gid)) {
                 LambdaQueryWrapper<ShortLinkGotoDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkGotoDO.class)
                         .eq(ShortLinkGotoDO::getFullShortUrl, fullShortUrl);
