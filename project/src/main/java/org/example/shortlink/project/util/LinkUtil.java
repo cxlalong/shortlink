@@ -1,8 +1,7 @@
 package org.example.shortlink.project.util;
 
-import cn.hutool.core.date.DateUnit;
-import cn.hutool.core.date.DateUtil;
-
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 
@@ -19,7 +18,9 @@ public class LinkUtil {
      * @return 有效期时间戳
      */
     public static long getLinkCacheValidDate(Date validDate) {
-        return Optional.ofNullable(validDate).map(each -> DateUtil.between(new Date(), each, DateUnit.MS))
+        return Optional.ofNullable(validDate)
+                .map(each -> Duration.between(Instant.now(), each.toInstant()).toMillis())
+                .map(duration -> Math.min(duration, DEFAULT_CACHE_VALID_DATE))
                 .orElse(DEFAULT_CACHE_VALID_DATE);
     }
 }
