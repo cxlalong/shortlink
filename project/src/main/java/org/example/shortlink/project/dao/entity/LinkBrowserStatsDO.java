@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import org.example.shortlink.project.common.database.BaseDO;
 
 import java.util.Date;
-
+/**
+ * 浏览器统计
+ */
 @Data
 @Builder
 @NoArgsConstructor

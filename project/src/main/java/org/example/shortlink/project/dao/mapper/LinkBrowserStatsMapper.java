@@ -5,6 +5,9 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.example.shortlink.project.dao.entity.LinkBrowserStatsDO;
 
+/**
+ * 短链接浏览器访问统计 Mapper
+ */
 public interface LinkBrowserStatsMapper extends BaseMapper<LinkBrowserStatsDO> {
     @Insert({
             "INSERT INTO t_link_browser_stats (",

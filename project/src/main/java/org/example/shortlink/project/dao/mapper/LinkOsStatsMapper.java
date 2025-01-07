@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.example.shortlink.project.dao.entity.LinkOsStatsDO;
-
+/**
+ * 短链地区访问 Mapper
+ */
 public interface LinkOsStatsMapper extends BaseMapper<LinkOsStatsDO> {
     @Insert({
             "INSERT INTO t_link_os_stats (",
