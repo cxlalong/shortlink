@@ -2,45 +2,43 @@ package org.example.shortlink.project.util;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.curator.shaded.com.google.common.base.Strings;
 
 public class IpAddressUtil {
 
     public static String getUserIp(HttpServletRequest request) {
-        // 检查 X-Forwarded-For 头部
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unKnown".equalsIgnoreCase(xForwardedFor)) {
-            // X-Forwarded-For 可能包含多个 IP 地址，取第一个非未知的有效 IP 地址
-            int firstUnknown = xForwardedFor.indexOf("unknown");
-            if (firstUnknown > 0) {
-                xForwardedFor = xForwardedFor.substring(0, firstUnknown);
-            }
-            String[] ips = xForwardedFor.split(",");
-            for (String ip : ips) {
-                String trimmedIp = ip.trim();
-                if (!"unknown".equalsIgnoreCase(trimmedIp)) {
-                    return trimmedIp;
-                }
+        String Xip = request.getHeader("X-Real-IP");
+        String XFor = request.getHeader("X-Forwarded-For");
+
+        if (!Strings.isNullOrEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)) {
+            //多次反向代理后会有多个ip值，第一个ip才是真实ip
+            int index = XFor.indexOf(",");
+            if (index != -1) {
+                return XFor.substring(0, index);
+            } else {
+                return XFor;
             }
         }
-
-        // 检查 X-Real-IP 头部
-        String xRealIp = request.getHeader("X-Real-IP");
-        if (xRealIp != null && !xRealIp.isEmpty() && !"unKnown".equalsIgnoreCase(xRealIp)) {
-            return xRealIp;
+        XFor = Xip;
+        if (!Strings.isNullOrEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)) {
+            return XFor;
         }
-
-        // 检查 Proxy-Client-IP 和 WL-Proxy-Client-IP 头部
-        String proxyClientIp = request.getHeader("Proxy-Client-IP");
-        if (proxyClientIp != null && !proxyClientIp.isEmpty() && !"unKnown".equalsIgnoreCase(proxyClientIp)) {
-            return proxyClientIp;
+        if (Strings.nullToEmpty(XFor).trim().isEmpty() || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("Proxy-Client-IP");
         }
-
-        String wlProxyClientIp = request.getHeader("WL-Proxy-Client-IP");
-        if (wlProxyClientIp != null && !wlProxyClientIp.isEmpty() && !"unKnown".equalsIgnoreCase(wlProxyClientIp)) {
-            return wlProxyClientIp;
+        if (Strings.nullToEmpty(XFor).trim().isEmpty() || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("WL-Proxy-Client-IP");
         }
-
-        // 使用 getRemoteAddr() 作为最后的选择
-        return request.getRemoteAddr();
+        if (Strings.nullToEmpty(XFor).trim().isEmpty() || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (Strings.nullToEmpty(XFor).trim().isEmpty() || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (Strings.nullToEmpty(XFor).trim().isEmpty() || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getRemoteAddr();
+        }
+        return XFor;
     }
+
 }
