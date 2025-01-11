@@ -406,6 +406,15 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                     .ip(remoteAddr)
                     .build();
             linkAccessLogsMapper.insert(linkAccessLogsDO);
+
+            LinkDeviceStatsDO linkDeviceStatsDO = LinkDeviceStatsDO.builder()
+                    .fullShortUrl(fullShortUrl)
+                    .gid(gid)
+                    .device(UserAgentUtils.getDevice((HttpServletRequest) request))
+                    .date(date)
+                    .cnt(1)
+                    .build();
+            linkDeviceStatsMapper.shortLinkDeviceStats(linkDeviceStatsDO);
         } catch (Throwable ex) {
             log.error("统计短链接访问异常", ex);
         }
