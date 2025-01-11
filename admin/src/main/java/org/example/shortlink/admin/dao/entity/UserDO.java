@@ -2,11 +2,13 @@ package org.example.shortlink.admin.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.example.shortlink.admin.common.database.BaseDO;
 
 /**
  * 用户持久层实体类
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("t_user")
 public class UserDO extends BaseDO {

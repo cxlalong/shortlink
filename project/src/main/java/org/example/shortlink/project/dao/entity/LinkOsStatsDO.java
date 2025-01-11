@@ -1,16 +1,14 @@
 package org.example.shortlink.project.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.shortlink.project.common.database.BaseDO;
 
 import java.util.Date;
 /**
  * 操作系统统计
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor

@@ -11,6 +11,7 @@ import java.util.Date;
 /**
  * 基础访问统计
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @AllArgsConstructor

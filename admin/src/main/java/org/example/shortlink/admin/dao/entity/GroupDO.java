@@ -1,15 +1,13 @@
 package org.example.shortlink.admin.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.shortlink.admin.common.database.BaseDO;
 
 /**
  * 短链接分组实体
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("t_group")
 @Builder
