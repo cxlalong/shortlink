@@ -8,7 +8,7 @@ import org.example.shortlink.admin.common.convention.result.Results;
 import org.example.shortlink.admin.dto.req.RecycleBinRecoverReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinRemoveReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinSaveReqDTO;
-import org.example.shortlink.admin.dto.req.ShortLinkRecycleBinPageReqDTO;
+import org.example.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import org.example.shortlink.admin.remote.ShortLinkRemoteService;
 import org.example.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import org.example.shortlink.admin.service.RecycleBinService;

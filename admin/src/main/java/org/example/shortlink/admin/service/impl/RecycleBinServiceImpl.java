@@ -10,7 +10,7 @@ import org.example.shortlink.admin.common.convention.exception.ServiceException;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.dao.entity.GroupDO;
 import org.example.shortlink.admin.dao.mapper.GroupMapper;
-import org.example.shortlink.admin.dto.req.ShortLinkRecycleBinPageReqDTO;
+import org.example.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import org.example.shortlink.admin.remote.ShortLinkRemoteService;
 import org.example.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import org.example.shortlink.admin.service.RecycleBinService;

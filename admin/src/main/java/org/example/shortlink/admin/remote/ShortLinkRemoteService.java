@@ -4,17 +4,16 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.dto.req.RecycleBinRecoverReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinRemoveReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinSaveReqDTO;
-import org.example.shortlink.admin.dto.req.ShortLinkRecycleBinPageReqDTO;
 import org.example.shortlink.admin.remote.dto.req.ShortLinkCreateReqDTO;
 import org.example.shortlink.admin.remote.dto.req.ShortLinkPageReqDTO;
+import org.example.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import org.example.shortlink.admin.remote.dto.req.ShortLinkUpdateReqDTO;
-import org.example.shortlink.admin.remote.dto.resp.ShortLinkCreateRespDTO;
-import org.example.shortlink.admin.remote.dto.resp.ShortLinkGroupCountQueryRespDTO;
-import org.example.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
+import org.example.shortlink.admin.remote.dto.resp.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -104,4 +103,84 @@ public interface ShortLinkRemoteService {
         return JSON.parseObject(resultPageStr, new TypeReference<>() {
         });
     }
+
+    /**
+     * 访问单个短链接指定时间内监控数据
+     *
+     * @param fullShortUrl 完整短链接
+     * @param gid          分组标识
+     * @param startDate    开始时间
+     * @param endDate      结束时间
+     * @return 短链接监控信息
+     */
+    default Result<ShortLinkStatsRespDTO> oneShortLinkStats(@RequestParam("fullShortUrl") String fullShortUrl,
+                                                    @RequestParam("gid") String gid,
+                                                    @RequestParam("enableStatus") Integer enableStatus,
+                                                    @RequestParam("startDate") String startDate,
+                                                    @RequestParam("endDate") String endDate) {
+        String resultBodyStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/stats/one?fullShortUrl=" + fullShortUrl + "&gid=" + gid + "&enableStatus=" + enableStatus + "&startDate=" + startDate + "&endDate=" + endDate);
+        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 访问分组短链接指定时间内监控数据
+     *
+     * @param gid       分组标识
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return 分组短链接监控信息
+     */
+    default Result<ShortLinkStatsRespDTO> groupShortLinkStats(@RequestParam("gid") String gid,
+                                                      @RequestParam("startDate") String startDate,
+                                                      @RequestParam("endDate") String endDate) {
+        String resultBodyStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/stats/group?gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate);
+        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+        });
+    }
+
+
+    /**
+     * 访问单个短链接指定时间内监控访问记录数据
+     *
+     * @param fullShortUrl 完整短链接
+     * @param gid          分组标识
+     * @param startDate    开始时间
+     * @param endDate      结束时间
+     * @param current      当前页
+     * @param size         一页数据量
+     * @return 短链接监控访问记录信息
+     */
+    default Result<Page<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(@RequestParam("fullShortUrl") String fullShortUrl,
+                                                                               @RequestParam("gid") String gid,
+                                                                               @RequestParam("startDate") String startDate,
+                                                                               @RequestParam("endDate") String endDate,
+                                                                               @RequestParam("enableStatus") Integer enableStatus,
+                                                                               @RequestParam("current") Long current,
+                                                                               @RequestParam("size") Long size) {
+        String resultBodyStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/stats/access-record?fullShortUrl=" + fullShortUrl + "&gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate + "&enableStatus=" + enableStatus + "&current=" + current + "&size=" + size);
+        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 访问分组短链接指定时间内监控访问记录数据
+     *
+     * @param gid       分组标识
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @param current   当前页
+     * @param size      一页数据量
+     * @return 分组短链接监控访问记录信息
+     */
+    default Result<Page<ShortLinkStatsAccessRecordRespDTO>> groupShortLinkStatsAccessRecord(@RequestParam("gid") String gid,
+                                                                                    @RequestParam("startDate") String startDate,
+                                                                                    @RequestParam("endDate") String endDate,
+                                                                                    @RequestParam("current") Long current,
+                                                                                    @RequestParam("size") Long size) {
+        String resultBodyStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/stats/access-record/group?gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate + "&current=" + current + "&size=" + size);
+        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+        });
+    }
+
 }
