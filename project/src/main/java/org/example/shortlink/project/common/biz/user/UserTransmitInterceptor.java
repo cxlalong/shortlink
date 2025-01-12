@@ -1,3 +1,4 @@
+
 package org.example.shortlink.project.common.biz.user;
 
 import cn.hutool.core.util.StrUtil;
@@ -15,10 +16,7 @@ public class UserTransmitInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(@Nullable HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable Object handler) throws Exception {
-        String username = null;
-        if (request != null) {
-            username = request.getHeader("username");
-        }
+        String username = request.getHeader("username");
         if (StrUtil.isNotBlank(username)) {
             String userId = request.getHeader("userId");
             String realName = request.getHeader("realName");
