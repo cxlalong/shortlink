@@ -1,10 +1,13 @@
 package org.example.shortlink.admin.remote;
 
+import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.example.shortlink.admin.common.biz.user.UserContext;
+import org.example.shortlink.admin.common.convention.exception.ServiceException;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.dto.req.RecycleBinRecoverReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinRemoveReqDTO;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.example.shortlink.admin.common.convention.errorcode.BaseErrorCode.REMOTE_ERROR;
 
 /**
  * 短链接中台远程调用服务
@@ -118,9 +123,16 @@ public interface ShortLinkRemoteService {
                                                     @RequestParam("enableStatus") Integer enableStatus,
                                                     @RequestParam("startDate") String startDate,
                                                     @RequestParam("endDate") String endDate) {
-        String resultBodyStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/stats/one?fullShortUrl=" + fullShortUrl + "&gid=" + gid + "&enableStatus=" + enableStatus + "&startDate=" + startDate + "&endDate=" + endDate);
-        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
-        });
+        String url = "http://127.0.0.1:8001/api/short-link/v1/stats?fullShortUrl=" + fullShortUrl + "&gid=" + gid + "&enableStatus=" + enableStatus + "&startDate=" + startDate + "&endDate=" + endDate;
+        HttpRequest request = new HttpRequest(url)
+                .header("username", UserContext.getUsername());
+        try {
+            String resultBodyStr = request.execute().body();
+            return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            throw new ServiceException(REMOTE_ERROR);
+        }
     }
 
     /**
@@ -134,9 +146,16 @@ public interface ShortLinkRemoteService {
     default Result<ShortLinkStatsRespDTO> groupShortLinkStats(@RequestParam("gid") String gid,
                                                       @RequestParam("startDate") String startDate,
                                                       @RequestParam("endDate") String endDate) {
-        String resultBodyStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/stats/group?gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate);
-        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
-        });
+        String url = "http://127.0.0.1:8001/api/short-link/v1/stats/group?gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate;
+        HttpRequest request = new HttpRequest(url)
+                .header("username", UserContext.getUsername());
+        try {
+            String resultBodyStr = request.execute().body();
+            return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            throw new ServiceException(REMOTE_ERROR);
+        }
     }
 
 
@@ -158,9 +177,16 @@ public interface ShortLinkRemoteService {
                                                                                @RequestParam("enableStatus") Integer enableStatus,
                                                                                @RequestParam("current") Long current,
                                                                                @RequestParam("size") Long size) {
-        String resultBodyStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/stats/access-record?fullShortUrl=" + fullShortUrl + "&gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate + "&enableStatus=" + enableStatus + "&current=" + current + "&size=" + size);
-        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
-        });
+        String url = "http://127.0.0.1:8001/api/short-link/v1/stats/access-record?fullShortUrl=" + fullShortUrl + "&gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate + "&enableStatus=" + enableStatus + "&current=" + current + "&size=" + size;
+        HttpRequest request = new HttpRequest(url)
+                .header("username", UserContext.getUsername());
+        try {
+            String resultBodyStr = request.execute().body();
+            return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            throw new ServiceException(REMOTE_ERROR);
+        }
     }
 
     /**
@@ -178,9 +204,16 @@ public interface ShortLinkRemoteService {
                                                                                     @RequestParam("endDate") String endDate,
                                                                                     @RequestParam("current") Long current,
                                                                                     @RequestParam("size") Long size) {
-        String resultBodyStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/stats/access-record/group?gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate + "&current=" + current + "&size=" + size);
-        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
-        });
+        String url = "http://127.0.0.1:8001/api/short-link/v1/stats/access-record/group?gid=" + gid + "&startDate=" + startDate + "&endDate=" + endDate + "&current=" + current + "&size=" + size;
+        HttpRequest request = new HttpRequest(url)
+                .header("username", UserContext.getUsername());
+        try {
+            String resultBodyStr = request.execute().body();
+            return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            throw new ServiceException(REMOTE_ERROR);
+        }
     }
 
 }
