@@ -12,10 +12,7 @@ import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.dto.req.RecycleBinRecoverReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinRemoveReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinSaveReqDTO;
-import org.example.shortlink.admin.remote.dto.req.ShortLinkCreateReqDTO;
-import org.example.shortlink.admin.remote.dto.req.ShortLinkPageReqDTO;
-import org.example.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
-import org.example.shortlink.admin.remote.dto.req.ShortLinkUpdateReqDTO;
+import org.example.shortlink.admin.remote.dto.req.*;
 import org.example.shortlink.admin.remote.dto.resp.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -216,4 +213,17 @@ public interface ShortLinkRemoteService {
         }
     }
 
+    default Result<ShortLinkBatchCreateRespDTO> batchCreateShortLink(ShortLinkBatchCreateReqDTO requestParam) {
+        String url = "http://127.0.0.1:8001/api/short-link/v1/batch-create";
+        HttpRequest request = new HttpRequest(url)
+                .header("username", UserContext.getUsername())
+                .body(JSON.toJSONString(requestParam));
+        try {
+            String resultBodyStr = request.execute().body();
+            return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            throw new ServiceException(REMOTE_ERROR);
+        }
+    }
 }
