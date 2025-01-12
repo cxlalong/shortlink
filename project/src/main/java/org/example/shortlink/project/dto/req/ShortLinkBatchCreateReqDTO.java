@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 批量创建短链接请求参数
+ * 短链接批量创建请求对象
  */
 @Data
 public class ShortLinkBatchCreateReqDTO {
