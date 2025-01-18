@@ -56,7 +56,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -169,23 +169,52 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     public ShortLinkBatchCreateRespDTO batchCreateShortLink(ShortLinkBatchCreateReqDTO requestParam) {
         List<String> originUrls = requestParam.getOriginUrls();
         List<String> describes = requestParam.getDescribes();
+        // 创建一个模板对象，用于后续复制
+        ShortLinkCreateReqDTO templateRequest = BeanUtil.toBean(requestParam, ShortLinkCreateReqDTO.class);
         List<ShortLinkBaseInfoRespDTO> result = new ArrayList<>();
+
+        // 使用线程池来并发执行任务
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        CompletionService<ShortLinkBaseInfoRespDTO> ecs = new ExecutorCompletionService<>(executor);
+
         for (int i = 0; i < originUrls.size(); i++) {
-            ShortLinkCreateReqDTO shortLinkCreateReqDTO = BeanUtil.toBean(requestParam, ShortLinkCreateReqDTO.class);
-            shortLinkCreateReqDTO.setOriginUrl(originUrls.get(i));
-            shortLinkCreateReqDTO.setDescribe(describes.get(i));
+            final int index = i;
+            ecs.submit(() -> {
+                try {
+                    // 复制模板对象并设置特定属性
+                    ShortLinkCreateReqDTO req = BeanUtil.copyProperties(templateRequest, ShortLinkCreateReqDTO.class);
+                    req.setOriginUrl(originUrls.get(index));
+                    req.setDescribe(describes.get(index));
+
+                    ShortLinkCreateRespDTO shortLink = createShortLink(req);
+                    return ShortLinkBaseInfoRespDTO.builder()
+                            .fullShortUrl(shortLink.getFullShortUrl())
+                            .originUrl(shortLink.getOriginUrl())
+                            .describe(describes.get(index))
+                            .build();
+                } catch (Throwable ex) {
+                    log.error("批量创建短链接失败，原始参数：{}", originUrls.get(index), ex);
+                    return null; // 或者返回一个表示错误的对象
+                }
+            });
+        }
+
+        // 收集结果
+        for (int i = 0; i < originUrls.size(); i++) {
             try {
-                ShortLinkCreateRespDTO shortLink = createShortLink(shortLinkCreateReqDTO);
-                ShortLinkBaseInfoRespDTO linkBaseInfoRespDTO = ShortLinkBaseInfoRespDTO.builder()
-                        .fullShortUrl(shortLink.getFullShortUrl())
-                        .originUrl(shortLink.getOriginUrl())
-                        .describe(describes.get(i))
-                        .build();
-                result.add(linkBaseInfoRespDTO);
-            } catch (Throwable ex) {
-                log.error("批量创建短链接失败，原始参数：{}", originUrls.get(i));
+                Future<ShortLinkBaseInfoRespDTO> future = ecs.take();
+                ShortLinkBaseInfoRespDTO linkBaseInfoRespDTO = future.get();
+                if (linkBaseInfoRespDTO != null) { // 忽略因错误而返回null的结果
+                    result.add(linkBaseInfoRespDTO);
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                Thread.currentThread().interrupt();
+                log.error("收集批量创建短链接结果时出错", e);
             }
         }
+
+        executor.shutdown();
+
         return ShortLinkBatchCreateRespDTO.builder()
                 .total(result.size())
                 .baseLinkInfos(result)
