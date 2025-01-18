@@ -214,16 +214,8 @@ public interface ShortLinkRemoteService {
     }
 
     default Result<ShortLinkBatchCreateRespDTO> batchCreateShortLink(ShortLinkBatchCreateReqDTO requestParam) {
-        String url = "http://127.0.0.1:8001/api/short-link/v1/create/batch";
-        HttpRequest request = new HttpRequest(url)
-                .header("username", UserContext.getUsername())
-                .body(JSON.toJSONString(requestParam));
-        try {
-            String resultBodyStr = request.execute().body();
-            return JSON.parseObject(resultBodyStr, new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            throw new ServiceException(REMOTE_ERROR);
-        }
+        String resultBodyStr = HttpUtil.post("http://127.0.0.1:8001/api/short-link/v1/create/batch", JSON.toJSONString(requestParam));
+        return JSON.parseObject(resultBodyStr, new TypeReference<>() {
+        });
     }
 }
