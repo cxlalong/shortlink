@@ -6,6 +6,9 @@ import org.example.shortlink.project.common.database.BaseDO;
 
 import java.util.Date;
 
+/**
+ * 短链接今日统计实体
+ */
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_link_stats_today")
 @Data

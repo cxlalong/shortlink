@@ -12,11 +12,12 @@ import java.util.Date;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("t_link")
 @Builder
+@TableName("t_link")
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShortLinkDO extends BaseDO {
+
     /**
      * id
      */
@@ -53,11 +54,7 @@ public class ShortLinkDO extends BaseDO {
     private String gid;
 
     /**
-     * 网站图标
-     */
-    private String favicon;
-    /**
-     * 启用标识 0:启用 1:未启用
+     * 启用标识 0：启用 1：未启用
      */
     private Integer enableStatus;
 
@@ -81,6 +78,11 @@ public class ShortLinkDO extends BaseDO {
      */
     @TableField("`describe`")
     private String describe;
+
+    /**
+     * 网站标识
+     */
+    private String favicon;
 
     /**
      * 历史PV
@@ -119,5 +121,4 @@ public class ShortLinkDO extends BaseDO {
      * 删除时间
      */
     private Long delTime;
-
 }

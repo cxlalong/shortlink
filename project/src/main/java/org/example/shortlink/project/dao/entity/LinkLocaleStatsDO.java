@@ -1,7 +1,5 @@
 package org.example.shortlink.project.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 import org.example.shortlink.project.common.database.BaseDO;
@@ -9,31 +7,25 @@ import org.example.shortlink.project.common.database.BaseDO;
 import java.util.Date;
 
 /**
- * 地域访问统计
+ * 地区统计访问实体
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @TableName("t_link_locale_stats")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class LinkLocaleStatsDO extends BaseDO {
 
     /**
-     * ID
+     * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * 完整短链接
      */
     private String fullShortUrl;
-
-    /**
-     * 分组标识
-     */
-    private String gid;
 
     /**
      * 日期

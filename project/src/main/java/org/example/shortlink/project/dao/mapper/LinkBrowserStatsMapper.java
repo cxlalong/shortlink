@@ -12,25 +12,18 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 短链接浏览器访问统计 Mapper
+ * 浏览器统计访问持久层
  */
 public interface LinkBrowserStatsMapper extends BaseMapper<LinkBrowserStatsDO> {
-    @Insert({
-            "INSERT INTO t_link_browser_stats (",
-            "  full_short_url, gid, date, cnt, browser, create_time, update_time, del_flag",
-            ") VALUES (",
-            "  #{linkBrowserStats.fullShortUrl,jdbcType=VARCHAR},",
-            "  #{linkBrowserStats.gid,jdbcType=VARCHAR},",
-            "  #{linkBrowserStats.date,jdbcType=DATE},",
-            "  #{linkBrowserStats.cnt,jdbcType=INTEGER},",
-            "  #{linkBrowserStats.browser,jdbcType=VARCHAR},",
-            "  NOW(), NOW(), 0",
-            ")",
-            "ON DUPLICATE KEY UPDATE",
-            "  cnt = cnt + #{linkBrowserStats.cnt},",
-            "  update_time = NOW()"
-    })
-    void shortLinkBrowserStats(@Param("linkBrowserStats") LinkBrowserStatsDO linkBrowserStatsDO);
+
+    /**
+     * 记录浏览器访问监控数据
+     */
+    @Insert("INSERT INTO " +
+            "t_link_browser_stats (full_short_url, date, cnt, browser, create_time, update_time, del_flag) " +
+            "VALUES( #{linkBrowserStats.fullShortUrl}, #{linkBrowserStats.date}, #{linkBrowserStats.cnt}, #{linkBrowserStats.browser}, NOW(), NOW(), 0) " +
+            "ON DUPLICATE KEY UPDATE cnt = cnt +  #{linkBrowserStats.cnt};")
+    void shortLinkBrowserState(@Param("linkBrowserStats") LinkBrowserStatsDO linkBrowserStatsDO);
 
     /**
      * 根据短链接获取指定日期内浏览器监控数据

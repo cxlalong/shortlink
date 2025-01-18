@@ -15,9 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 短链访问日志Mapper
+ * 访问日志监控持久层
  */
 public interface LinkAccessLogsMapper extends BaseMapper<LinkAccessLogsDO> {
+
     /**
      * 根据短链接获取指定日期内高频访问IP数据
      */
@@ -201,5 +202,4 @@ public interface LinkAccessLogsMapper extends BaseMapper<LinkAccessLogsDO> {
             "ORDER BY " +
             "    tlal.create_time DESC")
     IPage<LinkAccessLogsDO> selectGroupPage(@Param("param") ShortLinkGroupStatsAccessRecordReqDTO requestParam);
-
 }

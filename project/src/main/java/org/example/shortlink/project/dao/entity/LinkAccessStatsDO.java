@@ -1,7 +1,5 @@
 package org.example.shortlink.project.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 import org.example.shortlink.project.common.database.BaseDO;
@@ -9,26 +7,20 @@ import org.example.shortlink.project.common.database.BaseDO;
 import java.util.Date;
 
 /**
- * 基础访问统计
+ * 短链接基础访问监控实体
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @TableName("t_link_access_stats")
 public class LinkAccessStatsDO extends BaseDO {
 
     /**
-     * ID
+     * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
-
-    /**
-     * 分组标识
-     */
-    private String gid;
 
     /**
      * 完整短链接
@@ -46,12 +38,12 @@ public class LinkAccessStatsDO extends BaseDO {
     private Integer pv;
 
     /**
-     * 独立访问数
+     * 独立访客数
      */
     private Integer uv;
 
     /**
-     * 独立IP数
+     * 独立ip数
      */
     private Integer uip;
 

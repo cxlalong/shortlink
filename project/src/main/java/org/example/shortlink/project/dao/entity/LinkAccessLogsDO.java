@@ -4,22 +4,61 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 import org.example.shortlink.project.common.database.BaseDO;
 
+;
+
 /**
- * 访问记录表
+ * 访问日志监控实体
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @TableName("t_link_access_logs")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class LinkAccessLogsDO extends BaseDO {
 
-    private Long id; // ID
-    private String fullShortUrl; // 完整短链接
-    private String gid; // 分组标识
-    private String user; // 用户信息
-    private String browser; // 浏览器
-    private String os; // 操作系统
-    private String ip; // IP
+    /**
+     * id
+     */
+    private Long id;
+
+    /**
+     * 完整短链接
+     */
+    private String fullShortUrl;
+
+    /**
+     * 用户信息
+     */
+    private String user;
+
+    /**
+     * 浏览器
+     */
+    private String browser;
+
+    /**
+     * 操作系统
+     */
+    private String os;
+
+    /**
+     * ip
+     */
+    private String ip;
+
+    /**
+     * 访问网络
+     */
+    private String network;
+
+    /**
+     * 访问设备
+     */
+    private String device;
+
+    /**
+     * 地区
+     */
+    private String locale;
 }

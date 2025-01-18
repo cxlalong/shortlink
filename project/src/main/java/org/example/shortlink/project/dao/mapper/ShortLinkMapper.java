@@ -10,8 +10,8 @@ import org.example.shortlink.project.dto.req.ShortLinkRecycleBinPageReqDTO;
 /**
  * 短链接持久层
  */
-
 public interface ShortLinkMapper extends BaseMapper<ShortLinkDO> {
+
     /**
      * 短链接访问统计自增
      */

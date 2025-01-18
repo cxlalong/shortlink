@@ -22,6 +22,33 @@ short-link:
     white-list:
       enable: true
       details:
+        - leetcode.cn
+        - zhihu.com
+        - juejin.cn
+        - cnblogs.com
+        - google.com
+        - bing.com
+        - baidu.com
+        - facebook.com
+        - linkedin.com
+        - instagram.com
+        - weixin.qq.com
+        - weibo.com
+        - amazon.com
+        - taobao.com
+        - jd.com
+        - alibaba.com
+        - youtube.com
+        - bilibili.com
+        - bbc.com/news
+        - cnn.com
+        - xinhuanet.com
+        - coursera.org
+        - edx.org
+        - github.com
+        - stackoverflow.com
+        - mail.google.com
+        - outlook.live.com
 
 mybatis-plus:
   configuration:

@@ -470,7 +470,6 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                     .fullShortUrl(fullShortUrl)
                     .date(date)
                     .hour(hour)
-                    .gid(gid)
                     .build();
             Map<String, Object> localMap = new HashMap<>();
             localMap.put("key", key);
@@ -484,7 +483,6 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 boolean flag = StrUtil.equals("[]", province);
                 linkLocaleStatsDO = LinkLocaleStatsDO.builder()
                         .fullShortUrl(fullShortUrl)
-                        .gid(gid)
                         .date(date)
                         .province(flag ? "未知" : province)
                         .city(flag ? "未知" : localeResultJson.getString("city"))
@@ -492,31 +490,28 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .adcode(flag ? "未知" : localeResultJson.getString("adcode"))
                         .cnt(1)
                         .build();
-                linkLocaleStatsMapper.shortLinkLocaleStats(linkLocaleStatsDO);
+                linkLocaleStatsMapper.shortLinkLocaleState(linkLocaleStatsDO);
             }
             linkAccessStatsMapper.shortLinkStats(linkAccessStatsDO);
             String browser = UserAgentUtils.getBrowser((HttpServletRequest) request);
             String os = UserAgentUtils.getOperatingSystem((HttpServletRequest) request);
             LinkOsStatsDO linkOsStatsDO = LinkOsStatsDO.builder()
                     .fullShortUrl(fullShortUrl)
-                    .gid(gid)
                     .date(date)
                     .cnt(1)
                     .os(os)
                     .build();
-            linkOsStatsMapper.shortLinkOsStats(linkOsStatsDO);
+            linkOsStatsMapper.shortLinkOsState(linkOsStatsDO);
             LinkBrowserStatsDO linkBrowserStatsDO = LinkBrowserStatsDO.builder()
                     .fullShortUrl(fullShortUrl)
-                    .gid(gid)
                     .date(date)
                     .cnt(1)
                     .browser(browser)
                     .build();
-            linkBrowserStatsMapper.shortLinkBrowserStats(linkBrowserStatsDO);
+            linkBrowserStatsMapper.shortLinkBrowserState(linkBrowserStatsDO);
 
             LinkAccessLogsDO linkAccessLogsDO = LinkAccessLogsDO.builder()
                     .fullShortUrl(fullShortUrl)
-                    .gid(gid)
                     .user(uv.get())
                     .browser(browser)
                     .os(os)
@@ -526,21 +521,19 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
 
             LinkDeviceStatsDO linkDeviceStatsDO = LinkDeviceStatsDO.builder()
                     .fullShortUrl(fullShortUrl)
-                    .gid(gid)
                     .device(UserAgentUtils.getDevice((HttpServletRequest) request))
                     .date(date)
                     .cnt(1)
                     .build();
-            linkDeviceStatsMapper.shortLinkDeviceStats(linkDeviceStatsDO);
+            linkDeviceStatsMapper.shortLinkDeviceState(linkDeviceStatsDO);
 
             LinkNetworkStatsDO linkNetworkStatsDO = LinkNetworkStatsDO.builder()
                     .fullShortUrl(fullShortUrl)
-                    .gid(gid)
                     .network(UserAgentUtils.getNetwork((HttpServletRequest) request))
                     .date(date)
                     .cnt(1)
                     .build();
-            linkNetworkStatsMapper.shortLinkNetworkStats(linkNetworkStatsDO);
+            linkNetworkStatsMapper.shortLinkNetworkState(linkNetworkStatsDO);
         } catch (Throwable ex) {
             log.error("统计短链接访问异常", ex);
         }
@@ -603,7 +596,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         }
         List<String> details = gotoDomainWhiteListConfiguration.getDetails();
         if (!details.contains(domain)) {
-            throw new ClientException("演示环境为避免恶意攻击，请生成以下网站跳转链接：" + gotoDomainWhiteListConfiguration.getNames());
+            throw new ClientException("该网站不安全");
         }
     }
 
