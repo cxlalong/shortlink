@@ -13,9 +13,16 @@ spring:
       port: 6379
 
 short-link:
+  domain:
+    default: localhost:8001
   stats:
     locale:
       amap-key: 50622c42f5c538e64e5582335f53b13e
+  goto-domain:
+    white-list:
+      enable: true
+      details:
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

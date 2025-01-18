@@ -17,6 +17,8 @@ import org.example.shortlink.project.service.RecycleBinService;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 import static org.example.shortlink.project.common.constant.RedisKeyConstant.GOTO_IS_NULL_SHORT_LINK_KEY;
 import static org.example.shortlink.project.common.constant.RedisKeyConstant.GOTO_SHORT_LINK_KEY;
 
@@ -76,6 +78,7 @@ public class RecycleBinServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLin
                 .eq(ShortLinkDO::getEnableStatus, 1)
                 .eq(ShortLinkDO::getDelFlag, 0);
         ShortLinkDO delShortLinkDO = ShortLinkDO.builder()
+                .delTime(new Date().getTime())
                 .build();
         delShortLinkDO.setDelFlag(1);
         baseMapper.update(delShortLinkDO, updateWrapper);
