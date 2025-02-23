@@ -22,8 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecycleBinServiceImpl implements RecycleBinService {
 
-    ShortLinkRemoteService shortLinkRemoteService  = new ShortLinkRemoteService() {
-    };
+    private final ShortLinkRemoteService shortLinkRemoteService;
     private final GroupMapper groupMapper;
 
     @Override
@@ -36,6 +35,6 @@ public class RecycleBinServiceImpl implements RecycleBinService {
             throw new ServiceException("用户无分组信息");
         }
         requestParam.setGidList(groupDOList.stream().map(GroupDO::getGid).toList());
-        return shortLinkRemoteService.pageShortLink(requestParam);
+        return shortLinkRemoteService.pageRecycleBinShortLink(requestParam);
     }
 }

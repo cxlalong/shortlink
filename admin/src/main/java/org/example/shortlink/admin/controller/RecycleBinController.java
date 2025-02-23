@@ -24,10 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RecycleBinController {
 
-    RecycleBinService recycleBinService;
+    private final RecycleBinService recycleBinService;
 
-    ShortLinkRemoteService shortLinkRemoteService  = new ShortLinkRemoteService() {
-    };
+    private final ShortLinkRemoteService shortLinkRemoteService;
 
     /**
      * 保存回收站

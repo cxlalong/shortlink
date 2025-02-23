@@ -1,6 +1,7 @@
 package org.example.shortlink.admin.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.shortlink.admin.annotation.RateLimit;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.common.convention.result.Results;
 import org.example.shortlink.admin.dto.req.ShortLinkGroupSaveReqDTO;
@@ -34,6 +35,7 @@ public class GroupController {
      * 查询短链接分组集合
      */
     @GetMapping("/api/short-link/admin/v1/group")
+    @RateLimit(value = 1)
     public Result<List<ShortLinkGroupResqDTO>> listGroup() {
         return Results.success(groupService.listGroup());
     }

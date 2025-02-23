@@ -32,8 +32,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     /**
      * 后续重构为spring cloud feign调用
      */
-    ShortLinkRemoteService shortLinkRemoteService  = new ShortLinkRemoteService() {
-    };
+    private final ShortLinkRemoteService shortLinkRemoteService;
 
     @Override
     public void saveGroup(String groupName) {

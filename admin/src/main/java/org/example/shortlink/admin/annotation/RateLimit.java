@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface RateLimit {
     long value() default 100L;
-    long time() default 1L;
+    long time() default 1000L;
 }

@@ -35,7 +35,7 @@ public class RedissonRateLimitAspect {
             return;
         }
         RRateLimiter rateLimiter = getRateLimiter(generateRateLimiterKey(joinPoint), rateLimit);
-        if (!rateLimiter.tryAcquire(1, rateLimit.time(), TimeUnit.SECONDS)) {
+        if (!rateLimiter.tryAcquire(1, rateLimit.time(), TimeUnit.MILLISECONDS)) {
             throw new ClientException("当前服务器忙碌，请稍后再试");
         }
     }
@@ -47,7 +47,7 @@ public class RedissonRateLimitAspect {
                     RateType.OVERALL,
                     rateLimit.value(),
                     rateLimit.time(),
-                    RateIntervalUnit.SECONDS);
+                    RateIntervalUnit.MILLISECONDS);
             return rateLimiter;
         }
         if(rateLimiter.getConfig().getRate() != rateLimit.value() ||
@@ -56,7 +56,7 @@ public class RedissonRateLimitAspect {
                     RateType.OVERALL,
                     rateLimit.value(),
                     rateLimit.time(),
-                    RateIntervalUnit.SECONDS);
+                    RateIntervalUnit.MILLISECONDS);
         }
         return rateLimiter;
     }
