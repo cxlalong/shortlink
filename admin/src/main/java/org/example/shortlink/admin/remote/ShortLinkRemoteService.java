@@ -10,6 +10,7 @@ import org.example.shortlink.admin.remote.dto.req.*;
 import org.example.shortlink.admin.remote.dto.resp.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import java.util.List;
 /**
  * 短链接中台 Feign 远程调用服务
  */
+@Service
 @FeignClient(name = "short-link-service", url = "http://127.0.0.1:8001")
 public interface ShortLinkRemoteService {
 
@@ -39,7 +41,7 @@ public interface ShortLinkRemoteService {
      * 查询分组短链接总量
      */
     @GetMapping("/api/short-link/v1/count")
-    Result<List<ShortLinkGroupCountQueryRespDTO>> listGroupShortLinkCount(@RequestParam("gids") List<String> gids);
+    Result<List<ShortLinkGroupCountQueryRespDTO>> listGroupShortLinkCount(@RequestParam("requestParam") List<String> gids);
 
     /**
      * 修改短链接

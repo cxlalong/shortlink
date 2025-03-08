@@ -1,13 +1,12 @@
 package org.example.shortlink.admin.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.shortlink.admin.annotation.RateLimit;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.common.convention.result.Results;
 import org.example.shortlink.admin.dto.req.ShortLinkGroupSaveReqDTO;
 import org.example.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import org.example.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
-import org.example.shortlink.admin.dto.resp.ShortLinkGroupResqDTO;
+import org.example.shortlink.admin.dto.resp.ShortLinkGroupRespDTO;
 import org.example.shortlink.admin.service.GroupService;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +34,7 @@ public class GroupController {
      * 查询短链接分组集合
      */
     @GetMapping("/api/short-link/admin/v1/group")
-    @RateLimit(value = 1)
-    public Result<List<ShortLinkGroupResqDTO>> listGroup() {
+    public Result<List<ShortLinkGroupRespDTO>> listGroup() {
         return Results.success(groupService.listGroup());
     }
 
@@ -53,7 +51,7 @@ public class GroupController {
      */
     @DeleteMapping("/api/short-link/admin/v1/group")
     public Result<Void> delete(@RequestParam String gid) {
-        groupService.delete(gid);
+        groupService.deleteGroup(gid);
         return Results.success();
     }
     /**
