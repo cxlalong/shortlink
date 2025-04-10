@@ -1,15 +1,15 @@
 package org.example.shortlink.admin.controller;
 
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.common.convention.result.Results;
 import org.example.shortlink.admin.dto.req.RecycleBinRecoverReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinRemoveReqDTO;
 import org.example.shortlink.admin.dto.req.RecycleBinSaveReqDTO;
-import org.example.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import org.example.shortlink.admin.remote.ShortLinkRemoteService;
+import org.example.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import org.example.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import org.example.shortlink.admin.service.RecycleBinService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +41,7 @@ public class RecycleBinController {
      * 分页查询回收站短链接
      */
     @GetMapping("/api/short-link/admin/v1/recycle-bin/page")
-    public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
+    public Result<Page<ShortLinkPageRespDTO>> pageShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
         return recycleBinService.pageRecycleBinShortLink(requestParam);
     }
 

@@ -31,7 +31,7 @@ public interface UserService extends IService<UserDO> {
      * 注册用户
      * @param requestParam 注册用户请求参数
      */
-    void register(UserRegisterReqDTO requestParam);
+    void register(UserRegisterReqDTO requestParam) throws InterruptedException;
 
     /**
      * 根据用户名修改用户

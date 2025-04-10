@@ -2,16 +2,16 @@ package org.example.shortlink.admin.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.example.shortlink.admin.common.biz.user.UserContext;
 import org.example.shortlink.admin.common.convention.exception.ServiceException;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.dao.entity.GroupDO;
 import org.example.shortlink.admin.dao.mapper.GroupMapper;
-import org.example.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import org.example.shortlink.admin.remote.ShortLinkRemoteService;
+import org.example.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import org.example.shortlink.admin.remote.dto.resp.ShortLinkPageRespDTO;
 import org.example.shortlink.admin.service.RecycleBinService;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class RecycleBinServiceImpl implements RecycleBinService {
     private final GroupMapper groupMapper;
 
     @Override
-    public Result<IPage<ShortLinkPageRespDTO>> pageRecycleBinShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
+    public Result<Page<ShortLinkPageRespDTO>> pageRecycleBinShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getUsername, UserContext.getUsername())
                 .eq(GroupDO::getDelFlag, 0);

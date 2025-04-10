@@ -22,6 +22,15 @@ short-link:
     white-list:
       enable: true
       details:
+        - meituan.com
+        - xiaohongshu.com
+        - douyin.com
+        - wx.qq.com
+        - kuaishou.com
+        - douban.com
+        - tieba.baidu.com
+        - github.com
+        - gitee.com
         - leetcode.cn
         - zhihu.com
         - juejin.cn
@@ -49,6 +58,8 @@ short-link:
         - stackoverflow.com
         - mail.google.com
         - outlook.live.com
+        - feishu.cn
+        - dingtalk.com
 
 mybatis-plus:
   configuration:

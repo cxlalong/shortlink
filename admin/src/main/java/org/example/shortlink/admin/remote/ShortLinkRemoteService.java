@@ -1,6 +1,5 @@
 package org.example.shortlink.admin.remote;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.example.shortlink.admin.common.convention.result.Result;
 import org.example.shortlink.admin.dto.req.RecycleBinRecoverReqDTO;
@@ -29,7 +28,7 @@ public interface ShortLinkRemoteService {
      * 分页查询短链接
      */
     @GetMapping("/api/short-link/v1/page")
-    Result<IPage<ShortLinkPageRespDTO>> pageShortLink(@SpringQueryMap ShortLinkPageReqDTO requestParam);
+    Result<Page<ShortLinkPageRespDTO>> pageShortLink(@SpringQueryMap ShortLinkPageReqDTO requestParam);
 
     /**
      * 创建短链接
@@ -77,7 +76,7 @@ public interface ShortLinkRemoteService {
      * 回收站分页查询
      */
     @GetMapping("/api/short-link/v1/recycle-bin/page")
-    Result<IPage<ShortLinkPageRespDTO>> pageRecycleBinShortLink(@SpringQueryMap ShortLinkRecycleBinPageReqDTO requestParam);
+    Result<Page<ShortLinkPageRespDTO>> pageRecycleBinShortLink(@SpringQueryMap ShortLinkRecycleBinPageReqDTO requestParam);
 
     /**
      * 访问单个短链接指定时间内监控数据

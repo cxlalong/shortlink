@@ -56,7 +56,7 @@ public class UserController {
      * 用户注册
      */
     @PostMapping("/api/short-link/admin/v1/user")
-    public Result<Void> register(@RequestBody UserRegisterReqDTO requestParam) {
+    public Result<Void> register(@RequestBody UserRegisterReqDTO requestParam) throws InterruptedException {
         userService.register(requestParam);
         return Results.success();
     }

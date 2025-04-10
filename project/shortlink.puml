@@ -1,0 +1,39 @@
+@startuml
+actor 租户
+actor 用户
+
+package 核心功能 {
+    usecase "注册" as UC1
+    usecase "登录" as UC2
+    usecase "生成短链接" as UC3
+    usecase "管理短链接" as UC4
+    usecase "查看统计" as UC5
+    usecase "管理短链接回收站" as UC6
+    usecase "管理分组" as UC7
+}
+
+package 开放接口 {
+    usecase “访问短链接” as UC8
+}
+
+
+租户 --> UC1
+租户 --> UC2
+租户 --> UC3
+租户 --> UC4
+租户 --> UC5
+租户 --> UC6
+租户 --> UC7
+
+租户 --> UC8
+用户 --> UC8
+
+
+
+UC3 --> UC2 : 需要登录
+UC4 --> UC2 : 需要登录
+UC5 --> UC2 : 需要登录
+UC6 --> UC2 : 需要登录
+UC7 --> UC2 : 需要登录
+
+@enduml
